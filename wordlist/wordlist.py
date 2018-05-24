@@ -27,7 +27,7 @@ class WordList:
         for word in self.words:
 
             # Generate word's anagram fingerprint: O(n log n)
-            fingerprint = word.sort()
+            fingerprint = ''.join(sorted(word))
 
             # Use a hash table to find single-word anagrams in O(1).
             try:
