@@ -7,15 +7,12 @@ class WordList:
 
     def __init__(self, wordlist):
 
-        self.words = list()
-
         # Remove duplicates: O(n)
         seen = set()
-        seen_add = seen.add
-        self.words = [x for x in wordlist if not (x in seen or seen_add(x))]
+        words = [x for x in wordlist if not (x in seen or seen.add(x))]
 
         # Sort words from shortest to longest, which will allow us to skip all words that don't fit anymore: O(n log n)
-        self.words.sort(key=len)
+        words.sort(key=len)
 
         # Pre-process words
         self.fingerprint_charmap = dict()
@@ -24,9 +21,9 @@ class WordList:
 
         fingerprint_set = set()
 
-        for word in self.words:
+        for word in words:
 
-            # Generate word's anagram fingerprint: O(n log n)
+            # Generate word's anagram fingerprint: O(w log w), but negligeable since words aren't that long
             fingerprint = ''.join(sorted(word))
 
             # Use a hash table to find single-word anagrams in O(1).
@@ -38,7 +35,7 @@ class WordList:
             # Stuff that only needs to be processed once for each anagram fingerprint
             if fingerprint not in fingerprint_set:
 
-                # Count characters: O(n)
+                # Count characters: O(w)
                 word_letters = dict()
                 for char in fingerprint:
                     try:

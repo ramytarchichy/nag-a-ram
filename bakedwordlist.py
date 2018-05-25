@@ -1,27 +1,27 @@
 class BakedWordList:
 
-
     def __init__(self, wordlist, phrase):
 
         self.fingerprints = list()
 
         # Count letters in anagram phrase
-        phrase_letters = dict()
-        phrase_chars = 0
+        self.phrase = phrase
+        self.phrase_charmap = dict()
+        self.phrase_charcount = 0
         for word in phrase:
-            phrase_chars += len(word)
+            self.phrase_charcount += len(word)
             for char in word:
                 try:
-                    phrase_letters[char] += 1
+                    self.phrase_charmap[char] += 1
                 except KeyError:
-                    phrase_letters[char] = 1
+                    self.phrase_charmap[char] = 1
 
         # Add valid word fingerprints only: O(n)
         for fingerprint in wordlist.fingerprints:
             valid = True
             for k, v in wordlist.fingerprint_charmap[fingerprint].items():
                 try:
-                    if phrase_letters[k] < v:
+                    if self.phrase_charmap[k] < v:
                         valid = False
                         break
                 except KeyError:
@@ -31,8 +31,15 @@ class BakedWordList:
                 self.fingerprints.append(fingerprint)
             else:
                 # Skip words that are too long
-                if len(fingerprint) > phrase_chars:
+                if len(fingerprint) > self.phrase_charcount:
                     break
 
         # At this point, the wordspace is drastically smaller than the original one, saving us a lot of computation
         # down the line
+
+        # Copy necessary data: O(n)
+        self.fingerprint_charmap = dict()
+        self.fingerprint_words = dict()
+        for fingerprint in self.fingerprints:
+            self.fingerprint_charmap[fingerprint] = wordlist.fingerprint_charmap[fingerprint]
+            self.fingerprint_words[fingerprint] = wordlist.fingerprint_words[fingerprint]
