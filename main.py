@@ -2,15 +2,13 @@ from datetime import datetime
 
 from wordlist import WordList
 from bakedwordlist import BakedWordList
+from solver import Solver
 
 t1 = datetime.utcnow()
 
-# Read file (didn't bother optimizing, not sure if it can be made to run faster, though it already only takes a few
-# milliseconds) and I don't wanna bother with that)
-lines = list()
+# Read file
 with open('wordlist_english.txt') as f:
-    for line in f:
-        lines.append(line.replace('\n', ''))
+    lines = [line.rstrip('\n') for line in f]
 
 t2 = datetime.utcnow()
 
@@ -30,3 +28,9 @@ print('Fingerprints:', len(bwl.fingerprints))
 print('Read File:', (t2 - t1).microseconds/1000, 'ms')
 print('Phase 1:', (t3 - t2).microseconds/1000, 'ms')
 print('Phase 2:', (t4 - t3).microseconds/1000, 'ms')
+
+
+# ANAGRAMS!
+s = Solver(bwl, 2, 4)
+for anagram in s:
+    print(' '.join(anagram))
