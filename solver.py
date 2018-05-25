@@ -20,16 +20,22 @@ class Solver:
                 charlen = 0
                 for fingerprint in subset:
                     charlen += len(fingerprint)
-
                 if charlen <= self.wordlist.phrase_charcount:
                     too_long = False
-
                 if charlen != self.wordlist.phrase_charcount:
-                        valid = False
+                    valid = False
 
-                #
+                # Check if the letters themselves match
                 if valid:
-                    pass #TODO: Check if it's a valid anagram
+                    chars_left = self.wordlist.phrase_charmap.copy()
+                    for fingerprint in subset:
+                        for k, v in self.wordlist.fingerprint_charmap[fingerprint].items():
+                            chars_left[k] -= v
+                            if chars_left[k] < 0:
+                                valid = False
+                                break
+                        if not valid:
+                            break
 
                 # Proceed if it's a valid combination
                 if valid:

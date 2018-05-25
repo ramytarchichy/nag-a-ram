@@ -41,4 +41,4 @@ for anagram in s.generator():
 t6 = datetime.utcnow()
 
 print('Anagrams:', i)
-print('Time:', (t6 - t5).microseconds/1000, 'ms')
+print('Time:', (t6 - t5).seconds + (t6 - t5).microseconds/1000000, 's')
