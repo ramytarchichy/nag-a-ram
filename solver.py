@@ -8,38 +8,58 @@ class Solver:
         self.maxLength = maxLength
 
     def generator(self):
-        #raise NotImplementedError
-
         # Breadth-First Search (sort of, since it's not actually searching for something in a node tree, but behaves in
         # a similar way)
         for depth in range(self.minLength, self.maxLength+1):
+            too_long = True
             for subset in combinations(self.wordlist.fingerprints, depth):
 
-                #TODO: Check if it's a valid anagram
+                valid = True
 
-                for fingerprint_stack in permutations(subset):
+                # Make sure the amount of characters matches
+                charlen = 0
+                for fingerprint in subset:
+                    charlen += len(fingerprint)
 
-                    # Prepare word index stack
-                    word_index_stack = [0] * depth
+                if charlen <= self.wordlist.phrase_charcount:
+                    too_long = False
 
-                    # Loop decrementally through stack indices
-                    for i in range(depth-1, -1, -1):
+                if charlen != self.wordlist.phrase_charcount:
+                        valid = False
 
-                        # If the word index in this position is less than the length of the list of words with the same
-                        # fingerprint
-                        while word_index_stack[i] < len(self.wordlist.fingerprint_words[fingerprint_stack[i]]):
+                #
+                if valid:
+                    pass #TODO: Check if it's a valid anagram
 
-                            # Get the list of words making up the anagram:
-                            #  This works by iterating through every position in the stack, getting the fingerprint from
-                            #  that position, getting the list of words with that fingerprint, selecting the word matching
-                            #  the word index from that position, adding it to the list, rinsing and repeating.
-                            result = [self.wordlist.fingerprint_words[fingerprint_stack[x]][word_index_stack[x]] for x in range(depth)]
+                # Proceed if it's a valid combination
+                if valid:
 
-                            # Increment the word's index so we get a different one next time
-                            word_index_stack[i] += 1
+                    for fingerprint_stack in permutations(subset):
 
-                            # Return
-                            yield result
+                        # Prepare word index stack
+                        word_index_stack = [0] * depth
 
-                        # Set this word's index to 0 and try to increment the one before it
-                        word_index_stack[i] = 0
+                        # Loop decrementally through stack indices
+                        for i in range(depth-1, -1, -1):
+
+                            # If the word index in this position is less than the length of the list of words with the same
+                            # fingerprint
+                            while word_index_stack[i] < len(self.wordlist.fingerprint_words[fingerprint_stack[i]]):
+
+                                # Get the list of words making up the anagram:
+                                #  This works by iterating through every position in the stack, getting the fingerprint from
+                                #  that position, getting the list of words with that fingerprint, selecting the word matching
+                                #  the word index from that position, adding it to the list, rinsing and repeating.
+                                result = [self.wordlist.fingerprint_words[fingerprint_stack[x]][word_index_stack[x]] for x in range(depth)]
+
+                                # Increment the word's index so we get a different one next time
+                                word_index_stack[i] += 1
+
+                                # Return
+                                yield result
+
+                            # Set this word's index to 0 and try to increment the one before it
+                            word_index_stack[i] = 0
+            # No more anagrams
+            if too_long:
+                break

@@ -30,9 +30,15 @@ print('Phase 1:', (t3 - t2).microseconds/1000, 'ms')
 print('Phase 2:', (t4 - t3).microseconds/1000, 'ms')
 
 # ANAGRAMS!
-s = Solver(bwl, 2, 4)
+s = Solver(bwl, 1, 3)
 i = 0
+
+t5 = datetime.utcnow()
+
 for anagram in s.generator():
     i += 1
 
-print(i)
+t6 = datetime.utcnow()
+
+print('Anagrams:', i)
+print('Time:', (t6 - t5).microseconds/1000, 'ms')
