@@ -47,8 +47,9 @@ t5 = datetime.utcnow()
 
 for anagram in s.generator():
     i += 1
-    if md5(' '.join(anagram).encode('utf8')).digest() in hashes_bytes:
-        print(anagram)
+    phrase = ' '.join(anagram)
+    if md5((phrase).encode('utf8')).digest() in hashes_bytes:
+        print(phrase)
 
 t6 = datetime.utcnow()
 

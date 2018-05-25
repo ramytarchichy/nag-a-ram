@@ -1,4 +1,4 @@
-from itertools import combinations, permutations
+from itertools import combinations_with_replacement, permutations
 
 class Solver:
 
@@ -12,7 +12,8 @@ class Solver:
         # a similar way)
         for depth in range(self.minLength, self.maxLength+1):
             too_long = True
-            for subset in combinations(self.wordlist.fingerprints, depth):
+
+            for subset in combinations_with_replacement(self.wordlist.fingerprints, depth):
 
                 valid = True
 
@@ -44,13 +45,12 @@ class Solver:
 
                         # Prepare word index stack
                         word_index_stack = [0] * depth
+                        i = depth-1
 
-                        # Loop decrementally through stack indices
-                        for i in range(depth-1, -1, -1):
-
+                        while i >= 0:
                             # If the word index in this position is less than the length of the list of words with the same
                             # fingerprint
-                            while word_index_stack[i] < len(self.wordlist.fingerprint_words[fingerprint_stack[i]]):
+                            if word_index_stack[i] < len(self.wordlist.fingerprint_words[fingerprint_stack[i]]):
 
                                 # Get the list of words making up the anagram:
                                 #  This works by iterating through every position in the stack, getting the fingerprint from
@@ -59,13 +59,18 @@ class Solver:
                                 result = [self.wordlist.fingerprint_words[fingerprint_stack[x]][word_index_stack[x]] for x in range(depth)]
 
                                 # Increment the word's index so we get a different one next time
+                                i = depth-1
                                 word_index_stack[i] += 1
 
                                 # Return
                                 yield result
 
-                            # Set this word's index to 0 and try to increment the one before it
-                            word_index_stack[i] = 0
-            # No more anagrams
+                            else:
+                                # Set this word's index to 0 and try to increment the one before it
+                                word_index_stack[i] = 0
+                                i -= 1
+                                word_index_stack[i] += 1
+
+            # No more anagrams past this depth
             if too_long:
                 break
