@@ -13,7 +13,7 @@ class Solver:
         for depth in range(self.minLength, self.maxLength+1):
             too_long = True
 
-            for subset in combinations(self.wordlist.fingerprints, depth-1):
+            for subset in combinations(self.wordlist.fingerprints, depth-1) if depth > 1 else []:
 
                 valid = True
 
