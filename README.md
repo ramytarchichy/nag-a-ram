@@ -7,7 +7,7 @@ It was made in a couple of days as a submission to the
 [Trustpilot Anagram Challenge](https://followthewhiterabbit.trustpilot.com/cs/step3.html),
 but can be used for pretty much any anagram.
 
-If you didn't guess, it's called "**nag a ram**" because "nag a ram" is an anagram of the word "anagram".'
+If you didn't guess, it's called "**nag a ram**" because "nag a ram" is an anagram of the word "anagram".
 How meta...
 
 ## How it works

@@ -15,8 +15,11 @@ class Solver:
 
             if depth == 1:
 
-                for anagram in self.wordlist.fingerprint_words[self.wordlist.phrase_fingerprint]:
-                    yield anagram
+                try:
+                    for anagram in self.wordlist.fingerprint_words[self.wordlist.phrase_fingerprint]:
+                        yield anagram
+                except KeyError:
+                    pass
 
             else:
                 too_long = True
