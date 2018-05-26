@@ -32,8 +32,8 @@ print('Phase 1:', (t3 - t2).microseconds/1000, 'ms')
 print('Phase 2:', (t4 - t3).microseconds/1000, 'ms')
 
 # ANAGRAMS!
-# When set to (3,3), it will find 2 out of 3 anagrams in around 100 seconds on an i7-6700K@4.6GHz
-# When set to (3,4), it will find all 3 anagrams in 1 hour 50 minutes on the same hardware
+# When set to (3,3), it will find 2 out of 3 anagrams in around 1 second on an i7-6700K@4.6GHz
+# When set to (3,4), it will find all 3 anagrams in 1 minute 24 seconds on the same hardware
 s = Solver(bwl, 3, 4)
 
 hashes = [

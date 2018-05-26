@@ -13,7 +13,7 @@ class Solver:
         for depth in range(self.minLength, self.maxLength+1):
             too_long = True
 
-            for subset in combinations(self.wordlist.fingerprints, depth):
+            for subset in combinations(self.wordlist.fingerprints, depth-1):
 
                 valid = True
 
@@ -23,20 +23,36 @@ class Solver:
                     charlen += len(fingerprint)
                 if charlen <= self.wordlist.phrase_charcount:
                     too_long = False
-                if charlen != self.wordlist.phrase_charcount:
-                    valid = False
 
                 # Check if the letters themselves match
-                if valid:
-                    chars_left = self.wordlist.phrase_charmap.copy()
-                    for fingerprint in subset:
-                        for k, v in self.wordlist.fingerprint_charmap[fingerprint].items():
+                chars_left = self.wordlist.phrase_charmap.copy()
+                for fingerprint in subset:
+                    for k, v in self.wordlist.fingerprint_charmap[fingerprint].items():
+                        try:
                             chars_left[k] -= v
-                            if chars_left[k] < 0:
-                                valid = False
-                                break
-                        if not valid:
+                        except KeyError:
+                            valid = False
                             break
+                        chars_left_k = chars_left[k]
+                        if chars_left_k < 0:
+                            valid = False
+                            break
+                        elif chars_left_k == 0:
+                            chars_left.pop(k)
+                    if not valid:
+                        break
+
+                # Create a fingerprint from the leftover letters
+                if valid:
+                    leftover_fingerprint = list()
+                    for k, v in chars_left.items():
+                        leftover_fingerprint += [k] * v
+                    leftover_fingerprint = ''.join(sorted(leftover_fingerprint))
+
+                    if leftover_fingerprint in self.wordlist.fingerprint_set:
+                        subset = list(subset) + [leftover_fingerprint]
+                    else:
+                        valid = False
 
                 # Proceed if it's a valid combination
                 if valid:

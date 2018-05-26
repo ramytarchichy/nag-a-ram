@@ -37,6 +37,9 @@ class BakedWordList:
         # At this point, the wordspace is drastically smaller than the original one, saving us a lot of computation
         # down the line
 
+        # Add fingerprints to set for O(1) lookup: O(n)
+        self.fingerprint_set = set(self.fingerprints)
+
         # Copy necessary data: O(n)
         self.fingerprint_charmap = dict()
         self.fingerprint_words = dict()
