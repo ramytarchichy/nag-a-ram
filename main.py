@@ -6,14 +6,6 @@ from solver import Solver
 
 from hashlib import md5
 
-# Lists (of bytes) are not hashable, plus since there are only 3 hashes "in" performance loss is negligeable
-hashes =[
-    'e4820b45d2277f3844eac66c903e84be',
-    '23170acc097c24edb98fc5488ab033fe',
-    '665e5bcb0c20062fe8abaaf4628bb154'
-]
-hashes_bytes = [bytes.fromhex(h) for h in hashes]
-
 t1 = datetime.utcnow()
 
 # Read file: O(n)
@@ -40,18 +32,30 @@ print('Phase 1:', (t3 - t2).microseconds/1000, 'ms')
 print('Phase 2:', (t4 - t3).microseconds/1000, 'ms')
 
 # ANAGRAMS!
-s = Solver(bwl, 3, 3)
-i = 0
+# When set to (3,3), it will find 2 out of 3 anagrams in around 100 seconds on an i7-6700K@4.6GHz
+# When set to (3,4), it will find all 3 anagrams in 1 hour 50 minutes on the same hardware
+s = Solver(bwl, 3, 4)
+
+hashes = [
+    'e4820b45d2277f3844eac66c903e84be',
+    '23170acc097c24edb98fc5488ab033fe',
+    '665e5bcb0c20062fe8abaaf4628bb154'
+]
+# Lists (of bytes) are not hashable, plus since there are only 3 hashes, "in" performance loss is negligeable
+hashes_bytes = [bytes.fromhex(h) for h in hashes]
 
 t5 = datetime.utcnow()
 
 for anagram in s.generator():
-    i += 1
     phrase = ' '.join(anagram)
-    if md5((phrase).encode('utf8')).digest() in hashes_bytes:
-        print(phrase)
+    hash = md5(phrase.encode('utf8')).digest()
+    if hash in hashes_bytes:
+        print('FOUND ANAGRAM:', phrase)
+        hashes_bytes.remove(hash)
+        if len(hashes_bytes) == 0:
+            break
 
 t6 = datetime.utcnow()
 
-print('Anagrams:', i)
-print('Time:', (t6 - t5).seconds + (t6 - t5).microseconds/1000000, 's')
+delta = t6 - t5
+print('Time:', delta.seconds + delta.microseconds/1000000, 's')

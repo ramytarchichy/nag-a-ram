@@ -1,4 +1,4 @@
-from itertools import combinations_with_replacement, permutations
+from itertools import combinations, permutations
 
 class Solver:
 
@@ -13,7 +13,7 @@ class Solver:
         for depth in range(self.minLength, self.maxLength+1):
             too_long = True
 
-            for subset in combinations_with_replacement(self.wordlist.fingerprints, depth):
+            for subset in combinations(self.wordlist.fingerprints, depth):
 
                 valid = True
 
