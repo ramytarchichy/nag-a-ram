@@ -1,3 +1,5 @@
+from nagaram import get_fingerprint
+
 class BakedWordList:
 
     def __init__(self, wordlist, phrase):
@@ -5,7 +7,8 @@ class BakedWordList:
         self.fingerprints = list()
 
         # Count letters in anagram phrase
-        self.phrase = phrase
+        self.phrase_fingerprint = get_fingerprint(''.join(phrase))
+
         self.phrase_charmap = dict()
         self.phrase_charcount = 0
         for word in phrase:

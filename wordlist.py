@@ -1,3 +1,5 @@
+from nagaram import get_fingerprint
+
 # Before you point out that I can make this faster by taking into account the phrase to generate anagrams for,
 # this was actually originally built that way, but later modified under the assumption that the wordlist would not
 # need to be modified often, but the phrase would. Therefore we try to move as much of the optimization and
@@ -24,7 +26,7 @@ class WordList:
         for word in words:
 
             # Generate word's anagram fingerprint: O(w log w), but negligeable since words aren't that long
-            fingerprint = ''.join(sorted(word))
+            fingerprint = get_fingerprint(word)
 
             # Use a hash table to find single-word anagrams in O(1).
             try:
