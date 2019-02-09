@@ -1,72 +1,84 @@
-# nag a ram
+TODO:
+* terminal
+* cleanup and comments
+  * rename things
 
-**nag a ram** is a fast anagram solving algorithm, allowing for extremely efficient wordlist optimization
-and blazing fast anagram generation.
+# nag-a-ram
 
-It was made in a couple of days as a submission to the
-[Trustpilot Anagram Challenge](https://followthewhiterabbit.trustpilot.com/cs/step3.html),
-but can be used for pretty much any anagram.
+**nag-a-ram** is a fast anagram solving algorithm, allowing for extremely fast and efficient anagram generation. It was made as a submission to the [Trustpilot Anagram Challenge](https://followthewhiterabbit.trustpilot.com/).
 
-If you didn't guess, it's called "**nag a ram**" because "nag a ram" is an anagram of the word "anagram".
-How meta...
+If it isn't obvious already, it's called "nag-a-ram" because "nag a ram" is an anagram of "anagram". How meta...
+
 
 ## How it works
 
-It's pretty complicated, so let's go over a very simplified version, step by step:
-
 ### Preprocessing
-
-* We compute and save some data, such as "fingerprints". A fingerprint in this context is just a string
-that's just a sorted version of a word. This is useful for looking up anagrams for a single word in O(1).
-For example, we might have the words `fast` and `fats`. It we sort the letters, we get `afst` in both cases.
-Now we can add this to something like `lookup = dict()`, and whenever we want to get an anagram for `fats`,
-we generate a fingerprint for it and we can do `lookup[get_fingerprint('fats')]` and get a list of anagrams,
-in constant time
-* We then check how many of each letter each fingerprint has, and make sure it fits in the anagram phrase
+1. Count the amount of each letter in the anagram (simplified example: "hello": {h:1, e:1, l:2, o:1}, total length: 5)
+2. Save entire wordlist to memory (it's under a megabyte, chill out, plus it makes processing faster and easier)
+3. Split it into words, calculate their lengths, check if they don't have too many/different characters, generate their "fingerprints" (alphabetically sorted list of the word's characters, example: "fast" -> "afst"), and hash the fingerprints (djb2 for hashtable lookup)
+4. Iterate through the newly generated wordlist, check if the fingerprint (key) is in the hashtable. If it is, add the word (value) only to the hashtable, allowing us to find the word (and others with the same fingerprint) using the fingerprint. If not, add it to both the hashtable and the fingerprint list
+5. Sort the fingerprint list by length (in characters)
 
 ### Runtime
+1. Generate a combination (unordered, repeating) of n-1 fingerprints, n being the number of words of the resulting anagram
+2. Make sure that the length in characters is less than the input's
+3. Make sure the combination doesn't have too many of any character
+4. Count the remaining characters, use them to generate a fingerprint and hash it
+5. Try to find a fingerprint in the hashtable. If found, add it as the last fingerprint in the combination and continue
+6. For each combination, generate a permutation (ordered, unrepeating) of n fingerprints
+7. For each permutation, iterate through every fingerprint's words (see preprocessing step 4) to generate an anagram
+8. MD5, compare, print
+9. `goto 1`
 
-It behaves sort of like breadth-first search, as in the length in words of the anagram increases after
-the anagrams of the previous length have all been found.
 
-So let's assume that right now the length is 3 (as in 3 words). The program will generate combinations
-(unordered, no repetitions) made up of the fingerprints found in the preprocessing phase, that's 3-1, so 2
-words long. It will then make sure the length (as in characters) is less than the character count of the
-phrase, which will allow us to skip a lot of invalid combos without having to do the same (slow) step 2 of
-the preprocessing phase. If it passes that check though, it will go through that step. After that, it will
-create a fingerprint out of the leftover letters, and check if that exists in the set generated in the
-preprocessing stage, and add it to the "fingerprint stack" (the 2-word combo from before, creating a
-3-word combo)
+## Results (Core i7 6700K @ 4.6 GHz + SATA 3 SSD)
 
-If it passes all these checks, it will go ahead and create permutations (ordered, no repetitions) from this
-combo. From here on out, no more checks have to be made, while generate a lot of anagrams per checked combo.
+Using this algorithm I was able to get all 3 anagrams very quickly:
 
-Remember that these permutations are still just fingerprints, so for each permutation, it will go through
-every fingerprint, get all the words that it corresponds to, and use that to yield anagrams.
+| Benchmark     | Time         |
+| ------------- | ------------ |
+| Read File     | 1 **ms**     |
+| Preprocessing | 13 **ms**    |
+| Easy          | T+0.28**s**  |
+| Medium        | T+0.29**s**  |
+| Hard          | T+8.8**s**   |
+| Total Runtime | T+16**s**    |
 
-You might notice there's no GPU, MultiThreading, or any of that involved. Why? Because honestly it would
-cause more headaches in this situation than it is worth, especially since it's already extremely efficient
-(see results below).
+*Times were averaged over 5 runs.*
 
-## Results (Core i7 6700K @ 4.6 GHz)
+* **Total Runtime** indicates the amount of time required to iterate through all possible anagrams up to 4 words, even after the easy, medium and hard solutions have all been found already. I included it for benchmarking purposes.
 
-Using this program we were able to get all 3 anagrams in a ridiculousy efficient manner:
-* The whole reading and pre-processing stage took around 450 ms
-* The fist 2 anagrams (easy and medium) took an extra 1.5 seconds
-* The third anagram (hard) took around 83 more seconds
+* **T+...** indicates the amount of time elapsed since the proprocessing stage was done.
 
-The closest thing to that I found on GitHub was a [Ruby script](https://github.com/cathper/trustpilot-anagram)
-that took 15 minutes to find the anagrams, though I could have easily missed something.
+The closest thing that I could find for comparison was a [Python script](https://github.com/JK-mber/anagram_solver) that claimed to take 5-10 minutes on unspecified hardware to find all the 4 word anagrams.
 
-## Further Optimization
 
-In case you wanna squeeze out a bit of extra performance:
+## Build Instructions
 
-* Rewrite in C/C++ (or use Cython, didn't actually test it with that)
-* Multithreaded/GPU hashing
-* Maybe figure out more ways to predict if the combination is valid beforehand, though that will be very
-difficult, especially since that alone might add extra overhead.
+### Linux
+
+Make sure OpenSSL is installed (used for MD5 hashing):
+```
+sudo apt install libssl-dev
+```
+Then type the following in a terminal window:
+```
+git clone https://github.com/OverclockedSanic/nag-a-ram.git
+cd nag-a-ram
+make
+```
+
+## Usage
+
+### Linux
+
+To try it, just use:
+```
+$ make run
+```
 
 ## Conclusion
 
-Algorithms are fun. As for Trustpilot, this is a really fun, well made puzzle. Great job team!
+Other than rewriting this entire thing in Assembly or Verilog, building an ASIC, or using terabytes of memory, I *think* I *might* have just found the most efficient single-threaded solution possible (although I say that every time I make something, so I might be wrong). Still, it was very, very fun to solve.
+
+*PS: to whoever made the blue pill redirect to bing, that was kinda funny.*
