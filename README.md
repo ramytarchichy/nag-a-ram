@@ -1,8 +1,3 @@
-TODO:
-* terminal
-* cleanup and comments
-  * rename things
-
 # nag-a-ram
 
 **nag-a-ram** is a fast anagram solving algorithm, allowing for extremely fast and efficient anagram generation. It was made as a submission to the [Trustpilot Anagram Challenge](https://followthewhiterabbit.trustpilot.com/).
