@@ -13,21 +13,21 @@ typedef struct
 } word_t;
 
 
-typedef struct fingerprint_t
+typedef struct fingerprint
 {
     size_t                 len;
     unsigned char*         str;
     size_t                 words_size;
     unsigned char**        words;
-    struct fingerprint_t** address;
-} fingerprint_t;
+    struct fingerprint** address;
+} fingerprint;
 
 
 typedef struct
 {
     size_t          size;
-    fingerprint_t** fingerprints;
-} bucket_t;
+    fingerprint** fingerprints;
+} bucket;
 
 
 void generate_fingerprint(const size_t in[UCHAR_MAX+1], unsigned char* out);

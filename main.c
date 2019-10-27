@@ -49,9 +49,9 @@ int main(int argc, char** argv)
     preprocess_phrase(in, &in_char_count, in_char_counts);
 
     //Generate hash table and fingerprint list: O(n)
-    fingerprint_t* fingerprint_list;
+    fingerprint* fingerprint_list;
     size_t fingerprint_count = 0;
-    bucket_t* fingerprint_hashtable;
+    bucket* fingerprint_hashtable;
     size_t hashtable_size;
     preprocess_fingerprints(
         file_text,
@@ -102,7 +102,7 @@ int main(int argc, char** argv)
         fingerprint_hashtable,
         hashtable_size,
 
-        (callback_anagram_t)trustpilot_check,
+        (callback_anagram)trustpilot_check,
         (void*)&data
     );
 

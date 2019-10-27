@@ -17,9 +17,9 @@
  */
 
 
-void swap(fingerprint_t** a, fingerprint_t** b)
+void swap(fingerprint** a, fingerprint** b)
 {
-    fingerprint_t* tmp = *a;
+    fingerprint* tmp = *a;
     *a = *b;
     *b = tmp;
 }
@@ -43,7 +43,7 @@ void next_cmb(size_t* cmb, size_t cmb_size, size_t index, size_t fingerprint_cou
 
 
 
-void anagram_word_permutations(fingerprint_t** prm, size_t cmb_size, size_t in_char_count, callback_anagram_t function, void* data)
+void anagram_word_permutations(fingerprint** prm, size_t cmb_size, size_t in_char_count, callback_anagram function, void* data)
 {
     //Word Permutations
     size_t wrd[cmb_size];
@@ -57,7 +57,7 @@ void anagram_word_permutations(fingerprint_t** prm, size_t cmb_size, size_t in_c
 
         for (size_t i = 0; i < cmb_size; ++i)
         {
-            fingerprint_t* fp = prm[i];
+            fingerprint* fp = prm[i];
 
             if (!is_done) is_done = true;
             else ++wrd[i];
@@ -72,7 +72,7 @@ void anagram_word_permutations(fingerprint_t** prm, size_t cmb_size, size_t in_c
                 size_t last_index = 0;
                 for (size_t j = 0; j < cmb_size; ++j)
                 {
-                    fingerprint_t* fp = prm[j];
+                    fingerprint* fp = prm[j];
                     memcpy(&result[last_index], fp->words[wrd[j]], fp->len);
                     last_index += fp->len;
                     if (j < cmb_size-1) result[last_index++] = ' ';
@@ -96,13 +96,13 @@ void anagrams_gen(
     size_t             in_char_count,
     size_t             in_char_counts[UCHAR_MAX+1],
 
-    fingerprint_t*     fingerprint_list,
+    fingerprint*     fingerprint_list,
     size_t             fingerprint_count,
 
-    bucket_t*          fingerprint_hashtable,
+    bucket*          fingerprint_hashtable,
     size_t             hashtable_size,
 
-    callback_anagram_t function,
+    callback_anagram function,
     void*              data
 )
 {
@@ -145,7 +145,7 @@ void anagrams_gen(
                 size_t cmb_chars_used[UCHAR_MAX+1] = {0};
                 for (size_t f = 0; f < cmb_size-1; ++f)
                 {
-                    fingerprint_t* fp = &fingerprint_list[cmb[f]];
+                    fingerprint* fp = &fingerprint_list[cmb[f]];
                     for (size_t c = 0; c < fp->len; ++c)
                     {
                         if (++cmb_chars_used[fp->str[c]] > in_char_counts[fp->str[c]])
@@ -171,12 +171,12 @@ void anagrams_gen(
                     generate_fingerprint(cmb_chars_left, f_str);
                     
                     //Look for it in the hash table: O(1)
-                    bucket_t* bucket = &fingerprint_hashtable[str_hash(f_str)%hashtable_size];
+                    bucket* bucket = &fingerprint_hashtable[str_hash(f_str)%hashtable_size];
                     if (bucket->size > 0)
                     {
                         for (size_t f = 0; f < bucket->size; ++f)
                         {
-                            fingerprint_t* fingerprint = bucket->fingerprints[f];
+                            fingerprint* fingerprint = bucket->fingerprints[f];
                             if (data_equal(fingerprint->len, f_size, fingerprint->str, f_str))
                             {
                                 size_t fingerprint_index = fingerprint - fingerprint_list;
@@ -196,7 +196,7 @@ void anagrams_gen(
                         // and such won't affect the validity of the combination
 
                         //Convert `cmb[]` into a fingerprint array
-                        fingerprint_t* prm[cmb_size];
+                        fingerprint* prm[cmb_size];
                         for (size_t i = 0; i < cmb_size; ++i)
                         {
                             prm[i] = &fingerprint_list[cmb[i]];

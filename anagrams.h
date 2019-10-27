@@ -5,7 +5,7 @@
 
 #include "common.h"
 
-typedef void (*callback_anagram_t)(char*, size_t, void*);
+typedef void (*callback_anagram)(char*, size_t, void*);
 
 void anagrams_gen(
     size_t             min_size,
@@ -14,12 +14,12 @@ void anagrams_gen(
     size_t             in_char_count,
     size_t             in_char_counts[UCHAR_MAX+1],
 
-    fingerprint_t*     fingerprint_list,
+    fingerprint*     fingerprint_list,
     size_t             fingerprint_count,
 
-    bucket_t*          fingerprint_hashtable,
+    bucket*          fingerprint_hashtable,
     size_t             hashtable_size,
 
-    callback_anagram_t function,
+    callback_anagram function,
     void*              data
 );

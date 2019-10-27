@@ -19,17 +19,17 @@ void preprocess_fingerprints(
     size_t               anagram_size,
     size_t               anagram_chars[UCHAR_MAX+1],
 
-    fingerprint_t**      fingerprint_list,
+    fingerprint**      fingerprint_list,
     size_t*              fingerprint_count,
 
-    bucket_t**           fingerprint_hashtable,
+    bucket**           fingerprint_hashtable,
     size_t*              hashtable_size
 );
 
 void ngrm_free(
-    fingerprint_t* fp_list,
+    fingerprint* fp_list,
     size_t         fp_count,
     
-    bucket_t*      fp_hashtable,
+    bucket*      fp_hashtable,
     size_t         hashtable_size
 );
