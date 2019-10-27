@@ -8,8 +8,8 @@ If it isn't obvious already, it's called "nag-a-ram" because "nag a ram" is an a
 ## How it works
 
 ### Preprocessing
-1. Count the amount of each letter in the anagram (simplified example: "hello": {h:1, e:1, l:2, o:1}, total length: 5)
-2. Save entire wordlist to memory (it's under a megabyte, chill out, plus it makes processing faster and easier)
+1. Count the number of each letter's occurrence in the phrase (simplified example: "hello": {'h':1, 'e':1, 'l':2, 'o':1}, total length: 5)
+2. Save entire wordlist to memory (calm down, it's under a megabyte, plus it makes processing faster and easier)
 3. Split it into words, calculate their lengths, check if they don't have too many/different characters, generate their "fingerprints" (alphabetically sorted list of the word's characters, example: "fast" -> "afst"), and hash the fingerprints (djb2 for hashtable lookup)
 4. Iterate through the newly generated wordlist, check if the fingerprint (key) is in the hashtable. If it is, add the word (value) only to the hashtable, allowing us to find the word (and others with the same fingerprint) using the fingerprint. If not, add it to both the hashtable and the fingerprint list
 5. Sort the fingerprint list by length (in characters)
@@ -33,11 +33,11 @@ Using this algorithm I was able to get all 3 anagrams very quickly:
 | Benchmark     | Time         |
 | ------------- | ------------ |
 | Read File     | 1 **ms**     |
-| Preprocessing | 13 **ms**    |
-| Easy          | T+0.28**s**  |
-| Medium        | T+0.29**s**  |
-| Hard          | T+8.8**s**   |
-| Total Runtime | T+16**s**    |
+| Preprocessing | 12 **ms**    |
+| Easy          | T+0.10**s**  |
+| Medium        | T+0.11**s**  |
+| Hard          | T+4.28**s**  |
+| Total Runtime | T+10**s**    |
 
 *Times were averaged over 5 runs.*
 
