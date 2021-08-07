@@ -7,7 +7,7 @@ FILES_COMPILE=main.c util.c common.c anagrams.c preprocessing.c trustpilot.c
 FILES_DEPEND=$(FILES_COMPILE) Makefile util.h common.h anagrams.c preprocessing.c trustpilot.h
 
 #Compiler and common flags
-CC=clang $(FILES_COMPILE) -lssl -lcrypto -O2 -march=native
+CC=clang $(FILES_COMPILE) -lssl -lcrypto -Wall -O2 -march=native
 
 #Program test arguments
 ARGS=

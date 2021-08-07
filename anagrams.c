@@ -17,14 +17,14 @@
  */
 
 
-void swap(fingerprint** a, fingerprint** b)
+static void swap(fingerprint** a, fingerprint** b)
 {
-    fingerprint* tmp = *a;
+    fingerprint* const tmp = *a;
     *a = *b;
     *b = tmp;
 }
 
-void next_cmb(size_t* cmb, size_t cmb_size, size_t index, size_t fingerprint_count, bool* is_cmb_found)
+static void next_cmb(size_t* cmb, size_t cmb_size, size_t index, size_t fingerprint_count, bool* is_cmb_found)
 {
     for (long i = index; i >= 0; --i)
     {
@@ -43,7 +43,7 @@ void next_cmb(size_t* cmb, size_t cmb_size, size_t index, size_t fingerprint_cou
 
 
 
-void anagram_word_permutations(fingerprint** prm, size_t cmb_size, size_t in_char_count, callback_anagram function, void* data)
+static void anagram_word_permutations(fingerprint** prm, size_t cmb_size, size_t in_char_count, callback_anagram function, void* data)
 {
     //Word Permutations
     size_t wrd[cmb_size];
@@ -57,7 +57,7 @@ void anagram_word_permutations(fingerprint** prm, size_t cmb_size, size_t in_cha
 
         for (size_t i = 0; i < cmb_size; ++i)
         {
-            fingerprint* fp = prm[i];
+            fingerprint* const fp = prm[i];
 
             if (!is_done) is_done = true;
             else ++wrd[i];
@@ -72,7 +72,7 @@ void anagram_word_permutations(fingerprint** prm, size_t cmb_size, size_t in_cha
                 size_t last_index = 0;
                 for (size_t j = 0; j < cmb_size; ++j)
                 {
-                    fingerprint* fp = prm[j];
+                    fingerprint* const fp = prm[j];
                     memcpy(&result[last_index], fp->words[wrd[j]], fp->len);
                     last_index += fp->len;
                     if (j < cmb_size-1) result[last_index++] = ' ';

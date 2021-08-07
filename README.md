@@ -26,17 +26,25 @@ If it isn't obvious already, it's called "nag-a-ram" because "nag a ram" is an a
 9. `goto 1`
 
 
-## Results (Core i7 6700K @ 4.6 GHz + SATA 3 SSD)
+## Results
+
+Benchmarking setup:
+
+- **CPU:** Core i7 6700K @ 4.6 GHz
+- **RAM:** 2x Kingston KHX2400C15D4/8G at 2400 MT/s in dual-channel mode
+- **OS:** Pop!_OS 21.04
+- **Kernel:** Linux 5.11.0-7620-generic
+- **Compiler:** Clang 12.0.0
 
 Using this algorithm I was able to get all 3 anagrams very quickly:
 
 | Benchmark     | Time         |
 | ------------- | ------------ |
 | Read File     | 1 **ms**     |
-| Preprocessing | 12 **ms**    |
-| Easy          | T+0.10**s**  |
-| Medium        | T+0.11**s**  |
-| Hard          | T+4.28**s**  |
+| Preprocessing | 13 **ms**    |
+| Easy          | T+0.11**s**  |
+| Medium        | T+0.12**s**  |
+| Hard          | T+4.59**s**  |
 | Total Runtime | T+10**s**    |
 
 *Times were averaged over 5 runs.*
@@ -45,16 +53,16 @@ Using this algorithm I was able to get all 3 anagrams very quickly:
 
 * **T+...** indicates the amount of time elapsed since the proprocessing stage was done.
 
-The closest thing that I could find for comparison was a [Python script](https://github.com/JK-mber/anagram_solver) that claimed to take 5-10 minutes on unspecified hardware to find all the 4 word anagrams.
+The closest thing that I could find for comparison was a [C++ program by a coworker](https://github.com/simutisernestas/anagram-search) that takes ~37 seconds on the same hardware to find the hard anagram only.
 
 
 ## Build Instructions
 
 ### Linux
 
-Make sure OpenSSL is installed (used for MD5 hashing):
+Make sure OpenSSL (used for MD5 hashing) and clang (generates slightly faster code than gcc in this case) are installed:
 ```
-sudo apt install libssl-dev
+sudo apt install clang libssl-dev
 ```
 Then type the following in a terminal window:
 ```
@@ -71,9 +79,11 @@ To try it, just use:
 ```
 $ make run
 ```
+or
+```
+$ ./nagaram
+```
 
 ## Conclusion
 
-Other than rewriting this entire thing in Assembly or Verilog, building an ASIC, or using terabytes of memory, I *think* I *might* have just found the most efficient single-threaded solution possible (although I say that every time I make something, so I might be wrong). Still, it was very, very fun to solve.
-
-*PS: to whoever made the blue pill redirect to bing, that was kinda funny.*
+I *think* I *might* have just found the most efficient single-threaded solution possible. It was very, very fun to solve.

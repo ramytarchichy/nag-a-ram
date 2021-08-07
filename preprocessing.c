@@ -6,7 +6,7 @@
 #include "util.h"
 
 
-int compare_fingerprint(const void* fp1, const void* fp2) 
+static int compare_fingerprint(const void* fp1, const void* fp2) 
 {
     fingerprint* f1 = (fingerprint*)fp1;
     fingerprint* f2 = (fingerprint*)fp2;
@@ -26,7 +26,7 @@ void preprocess_phrase(const char* anagram_phrase, size_t* char_count, size_t ch
         if (c != ' ')
         {
             ++*char_count;
-            ++char_counts[c];
+            ++char_counts[(unsigned char)c];
         }
     }
 }
@@ -39,15 +39,15 @@ void preprocess_fingerprints(
     size_t               anagram_size,
     size_t               anagram_chars[UCHAR_MAX+1],
 
-    fingerprint**      fingerprint_list,
+    fingerprint**        fingerprint_list,
     size_t*              fingerprint_count,
 
-    bucket**           fingerprint_hashtable,
+    bucket**             fingerprint_hashtable,
     size_t*              hashtable_size
 )
 {
     //We won't actually get that many words, we will reallocate later
-    word_t* wordlist = malloc(data_size * sizeof *wordlist);
+    preprocessed_word* wordlist = malloc(data_size * sizeof *wordlist);
     size_t word_count = 0;
 
     //Get valid words: O(n)
@@ -70,13 +70,13 @@ void preprocess_fingerprints(
                  */
                 if (word_count > 0)
                 {
-                    word_t* prev_word = &wordlist[word_count-1];
+                    preprocessed_word* prev_word = &wordlist[word_count-1];
                     is_valid &= !data_equal(char_count, prev_word->len, &data[i-char_count], prev_word->str);
                 }
 
                 if (is_valid)
                 {
-                    word_t* word = &wordlist[word_count];
+                    preprocessed_word* word = &wordlist[word_count];
                     word->len = char_count;
 
                     //Copy word
@@ -131,11 +131,11 @@ void preprocess_fingerprints(
     for (size_t w = 0; w < word_count; ++w)
     {
         bool is_found_in_bucket = false;
-        const word_t* word = &wordlist[w];
-        bucket* bucket = &(*fingerprint_hashtable)[word->hash%ht_s];
-        for (size_t f = 0; f < bucket->size; ++f)
+        const preprocessed_word* word = &wordlist[w];
+        bucket* b = &(*fingerprint_hashtable)[word->hash%ht_s];
+        for (size_t f = 0; f < b->size; ++f)
         {
-            fingerprint* fingerprint = bucket->fingerprints[f];
+            fingerprint* fingerprint = b->fingerprints[f];
             if (data_equal(fingerprint->len, word->len, fingerprint->str, word->fingerprint))
             {
                 is_found_in_bucket = true;
@@ -147,17 +147,17 @@ void preprocess_fingerprints(
         
         if (!is_found_in_bucket)
         {
-            fingerprint* fingerprint = &(*fingerprint_list)[fp_c++];
-            fingerprint->len = word->len;
-            fingerprint->str = word->fingerprint;
-            fingerprint->words_size = 1;
-            fingerprint->words[0] = word->str;
+            fingerprint* const f = &(*fingerprint_list)[fp_c++];
+            f->len = word->len;
+            f->str = word->fingerprint;
+            f->words_size = 1;
+            f->words[0] = word->str;
 
-            bucket->fingerprints[bucket->size] = fingerprint;
+            b->fingerprints[b->size] = f;
 
-            fingerprint->address = &bucket->fingerprints[bucket->size];
+            f->address = &b->fingerprints[b->size];
 
-            ++bucket->size;
+            ++b->size;
         }
     }
 
@@ -192,10 +192,10 @@ void preprocess_fingerprints(
 
 
 void ngrm_free(
-    fingerprint* fp_list,
+    fingerprint*   fp_list,
     size_t         fp_count,
     
-    bucket*      fp_hashtable,
+    bucket*        fp_hashtable,
     size_t         hashtable_size
 )
 {

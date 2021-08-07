@@ -10,7 +10,7 @@ typedef struct
     unsigned char* str;
     unsigned char* fingerprint;
     size_t         hash;
-} word_t;
+} preprocessed_word;
 
 
 typedef struct fingerprint
@@ -19,7 +19,7 @@ typedef struct fingerprint
     unsigned char*         str;
     size_t                 words_size;
     unsigned char**        words;
-    struct fingerprint** address;
+    struct fingerprint**   address;
 } fingerprint;
 
 
