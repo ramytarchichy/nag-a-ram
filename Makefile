@@ -1,34 +1,18 @@
-#Output file names
 OUT=nagaram
-OUT_DBG=nagaram_dbg
 
-#Project files
-FILES_COMPILE=main.c util.c common.c anagrams.c preprocessing.c trustpilot.c
-FILES_DEPEND=$(FILES_COMPILE) Makefile util.h common.h anagrams.c preprocessing.c trustpilot.h
+FILES_COMPILE=*.cpp
+FILES_DEPEND=$(FILES_COMPILE) Makefile *.hpp
 
-#Compiler and common flags
-CC=clang $(FILES_COMPILE) -lssl -lcrypto -Wall -O2 -march=native
+CC_FLAGS=--std=c++17 -lssl -lcrypto -Wall -Wextra -O2 -march=native -g -fsanitize=address
 
-#Program test arguments
-ARGS=
-
-#Release version
 $(OUT): $(FILES_DEPEND)
-	$(CC) $(CC_FLAGS) -o $(OUT)
-	strip -s $(OUT)
+	clang++ $(FILES_COMPILE) -o $(OUT) $(CC_FLAGS)
+	#strip -s $(OUT)
 
-#Debug version
-$(OUT_DBG): $(FILES_DEPEND)
-	$(CC) -o $(OUT_DBG) -g -fsanitize=address -fsanitize-address-use-after-scope -fno-optimize-sibling-calls
-
-
-.PHONY: clean run debug
+.PHONY: clean run
 
 clean:
-	-rm $(OUT) $(OUT_DBG)
+	-rm $(OUT)
 
 run: $(OUT)
-	./$(OUT) $(ARGS)
-
-debug: $(OUT_DBG)
-	./$(OUT_DBG) $(ARGS)
+	./$(OUT)
